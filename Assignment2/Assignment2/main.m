@@ -24,14 +24,19 @@ int main(int argc, const char * argv[])
 		}
 		
 		NSString * sortedLine;
-		NSString * topWord;
+		NSMutableString *newSortedLine;
+		NSString * numberString;
 		int topCounter = 0;
 		int counter = 1;
+		int lineNumber = 0;
+		int topWordLocation = 0;
 		NSMutableArray * sortedCharacters = [[NSMutableArray alloc] init];
-		//NSMutableArray * original = [[NSMutableArray alloc] init];
+		NSMutableArray * originalArray = [[NSMutableArray alloc] init];
 		
 		for (NSString * line in [file componentsSeparatedByString:@"\n"]) {
-			//[original addObject:line];
+			
+			[originalArray addObject:line];
+			
 			NSMutableArray *charArray = [NSMutableArray arrayWithCapacity:line.length];
 			for (int i=0; i<line.length; i++) {
 				NSString *charStr = [line substringWithRange:NSMakeRange(i, 1)];
@@ -42,26 +47,51 @@ int main(int argc, const char * argv[])
 			}];
 			sortedLine = [charArray componentsJoinedByString:@""];
 			sortedLine = [sortedLine lowercaseString];
-			[sortedCharacters addObject:sortedLine];
+			newSortedLine = [NSMutableString stringWithFormat:@"%@%d", sortedLine, lineNumber];
+			lineNumber++;
+			[sortedCharacters addObject:newSortedLine];
 		}
 		
 		NSArray * sortedWords = [sortedCharacters sortedArrayUsingSelector:@selector(compare:)];
-		
+
 		for (int i=0; i<[sortedWords count]; i++){
-			if(i+1<[sortedWords count] && [sortedWords[i] isEqualToString:sortedWords[i+1]]){
-				counter+=1;
-			}
-			else
-				counter = 1;
-			if(topCounter < counter){
-				topCounter = counter;
-				topWord = sortedWords[i];
-				counter = 1;
+			
+			NSString * substring1;
+			NSString * substring2;
+			if(i+1<[sortedWords count]){
+				
+				NSScanner * scanner1 = [NSScanner scannerWithString:sortedWords[i]];
+				NSCharacterSet *numbers = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+				[scanner1 scanUpToCharactersFromSet:numbers intoString:&substring1];
+				NSScanner * scanner2 = [NSScanner scannerWithString:sortedWords[i+1]];
+				[scanner2 scanUpToCharactersFromSet:numbers intoString:&substring2];
+
+				if([substring1 isEqualToString:substring2]){
+					counter+=1;
+				}
+				else
+					counter = 1;
+				if(topCounter < counter){
+					topCounter = counter;
+					topWordLocation = i+1;
+					counter = 1;
+				}
 			}
 		}
 		
+		NSLog(@"The anagram with the largest set is:");
+		
+		for(int i=topWordLocation; i>topWordLocation-topCounter; i--){
+			
+			NSScanner * scanner = [NSScanner scannerWithString:sortedWords[i]];
+			NSCharacterSet *numbers = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+			[scanner scanUpToCharactersFromSet:numbers intoString:NULL];
+			[scanner scanCharactersFromSet:numbers intoString:&numberString];
+			long numberLocation = [numberString integerValue];
+			NSLog(@"%@", originalArray[numberLocation]);
+		}
+		
 		NSTimeInterval timeInterval = -[start timeIntervalSinceNow];
-		NSLog(@"The letters that give the most anagrams are: %@", topWord);
 		NSLog(@"It took %f seconds to calculate.", timeInterval);
 	}   
 
