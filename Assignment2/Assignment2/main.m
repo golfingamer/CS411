@@ -32,6 +32,7 @@ int main(int argc, const char * argv[])
 		int topWordLocation = 0;
 		NSMutableArray * sortedCharacters = [[NSMutableArray alloc] init];
 		NSMutableArray * originalArray = [[NSMutableArray alloc] init];
+		NSCharacterSet *numbers = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
 		
 		for (NSString * line in [file componentsSeparatedByString:@"\n"]) {
 			
@@ -54,28 +55,25 @@ int main(int argc, const char * argv[])
 		
 		NSArray * sortedWords = [sortedCharacters sortedArrayUsingSelector:@selector(compare:)];
 
-		for (int i=0; i<[sortedWords count]; i++){
+		for (int i=0; i<[sortedWords count]-1; i++){
 			
 			NSString * substring1;
 			NSString * substring2;
-			if(i+1<[sortedWords count]){
-				
-				NSScanner * scanner1 = [NSScanner scannerWithString:sortedWords[i]];
-				NSCharacterSet *numbers = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
-				[scanner1 scanUpToCharactersFromSet:numbers intoString:&substring1];
-				NSScanner * scanner2 = [NSScanner scannerWithString:sortedWords[i+1]];
-				[scanner2 scanUpToCharactersFromSet:numbers intoString:&substring2];
 
-				if([substring1 isEqualToString:substring2]){
-					counter+=1;
-				}
-				else
-					counter = 1;
-				if(topCounter < counter){
-					topCounter = counter;
-					topWordLocation = i+1;
-					counter = 1;
-				}
+			NSScanner * scanner = [NSScanner scannerWithString:sortedWords[i]];
+			scanner = [NSScanner scannerWithString:sortedWords[i]];
+			[scanner scanUpToCharactersFromSet:numbers intoString:&substring1];
+			scanner = [NSScanner scannerWithString:sortedWords[i+1]];
+			[scanner scanUpToCharactersFromSet:numbers intoString:&substring2];
+
+			if([substring1 isEqualToString:substring2])
+				counter++;
+			else
+				counter = 1;
+			if(topCounter < counter){
+				topCounter = counter;
+				topWordLocation = i+1;
+				counter = 1;
 			}
 		}
 		
@@ -84,10 +82,9 @@ int main(int argc, const char * argv[])
 		for(int i=topWordLocation; i>topWordLocation-topCounter; i--){
 			
 			NSScanner * scanner = [NSScanner scannerWithString:sortedWords[i]];
-			NSCharacterSet *numbers = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
 			[scanner scanUpToCharactersFromSet:numbers intoString:NULL];
 			[scanner scanCharactersFromSet:numbers intoString:&numberString];
-			long numberLocation = [numberString integerValue];
+			NSInteger numberLocation = [numberString integerValue];
 			NSLog(@"%@", originalArray[numberLocation]);
 		}
 		
