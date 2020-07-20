@@ -1,9 +1,8 @@
 CS411
 New
 =====
-<iframe width="560" height="315" 
-		src="https://www.youtube.com/embed/V7jTXq3QQOc" 
-		frameborder="0" 
-		allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-		allowfullscreen>
-</iframe>
+<p align="center">
+	<a href="http://www.youtube.com/watch?v=V7jTXq3QQOc">
+		<img src="https://img.youtube.com/vi/V7jTXq3QQOc/0.jpg" alt="PayFabric Receivables · Spring 2020 Update" style="width:100%;">
+	</a>
+</p>
